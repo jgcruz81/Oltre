@@ -1,17 +1,9 @@
-export const dynamic = "force-dynamic";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { BriefcaseIcon, SearchIcon, UserIcon } from 'lucide-react';
+import Link from 'next/link';
 
-import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { BriefcaseIcon, SearchIcon, UserIcon } from "lucide-react";
-import Link from "next/link";
-
-export default async function Home() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const { data: todos } = await supabase.from("todos").select();
-
+export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary">
       <div className="container mx-auto px-4 py-16">
@@ -61,14 +53,6 @@ export default async function Home() {
               </Link>
             </div>
           </Card>
-        </div>
-
-        {/* Debug output — optional */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-4 text-center">Todos</h2>
-          <pre className="bg-muted p-4 rounded overflow-x-auto">
-            {JSON.stringify(todos, null, 2)}
-          </pre>
         </div>
       </div>
     </div>
