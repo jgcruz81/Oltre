@@ -4,14 +4,28 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { createClient } from '@/lib/supabase/client';
 
-export default function SeekerOnboardingPage() {
+const businessTypes = [
+  'Landscaping',
+  'Plumbing',
+  'HVAC',
+  'Electrical',
+  'Carpentry',
+  'Painting',
+  'Cleaning',
+  'Other',
+];
+
+export default function SeekingOnboardingPage() {
   const [formData, setFormData] = useState({
     fullName: '',
+    companyName: '',
+    businessType: '',
     address: '',
     bio: '',
   });
@@ -29,9 +43,11 @@ export default function SeekerOnboardingPage() {
       const { error } = await supabase.from('profiles').upsert([
         {
           full_name: formData.fullName,
+          company_name: formData.companyName,
+          business_type: formData.businessType,
           address: formData.address,
           bio: formData.bio,
-          role: 'seeker',
+          role: 'seeking',
         },
       ]);
 
@@ -50,8 +66,8 @@ export default function SeekerOnboardingPage() {
         description: 'Profile has been created and you are logged in.',
       });
 
-      // Redirect to seeker dashboard
-      router.push('/seeker-dashboard');
+      // Redirect to seeking dashboard
+      router.push('/seeking-dashboard');
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -77,6 +93,37 @@ export default function SeekerOnboardingPage() {
               placeholder="Enter your full name"
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input
+              id="companyName"
+              value={formData.companyName}
+              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+              placeholder="Enter your company name"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="businessType">Business Type</Label>
+            <Select
+              value={formData.businessType}
+              onValueChange={(value) => setFormData({ ...formData, businessType: value })}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select business type" />
+              </SelectTrigger>
+              <SelectContent>
+                {businessTypes.map((type) => (
+                  <SelectItem key={type} value={type.toLowerCase()}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

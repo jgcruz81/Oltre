@@ -27,17 +27,36 @@ export default function AuthPage() {
       setLoading(true);
       
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
-              user_type: userType || 'seeker',
+              role: userType || 'seeker', // "role" matches your profile schema
             },
           },
         });
-
-        if (error) throw error;
+        
+        if (signUpError) throw signUpError;
+        
+        const userId = signUpData.user?.id;
+        
+        if (userId) {
+          const { error: insertError } = await supabase.from('profiles').insert([
+            {
+              id: userId,
+              role: userType || 'seeker',
+              full_name: '', // You’ll populate these during onboarding
+              address: '',
+              company_name: '',
+              business_type: '',
+              latitude: null,
+              longitude: null,
+            },
+          ]);
+        
+          if (insertError) throw insertError;
+        }
 
         toast({
           title: 'Success!',

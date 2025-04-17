@@ -22,7 +22,7 @@ export default function Home() {
               <p className="text-muted-foreground mb-4">
                 Browse local opportunities that match your skills and location
               </p>
-              <Link href="/auth?type=seeker">
+              <Link href="/onboarding/payer">
                 <Button className="w-full">Join as Seeker</Button>
               </Link>
             </div>
@@ -35,7 +35,7 @@ export default function Home() {
               <p className="text-muted-foreground mb-4">
                 Create opportunities and find talented individuals in your area
               </p>
-              <Link href="/auth?type=seeking">
+              <Link href="/onboarding/seeking">
                 <Button className="w-full">Join as Seeking</Button>
               </Link>
             </div>
@@ -48,7 +48,7 @@ export default function Home() {
               <p className="text-muted-foreground mb-4">
                 Already have an account? Sign in to continue
               </p>
-              <Link href="/auth">
+              <Link href="/login">
                 <Button variant="outline" className="w-full">Sign In</Button>
               </Link>
             </div>
