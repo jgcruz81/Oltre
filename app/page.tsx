@@ -22,7 +22,7 @@ export default function Home() {
               <p className="text-muted-foreground mb-4">
                 Browse local opportunities that match your skills and location
               </p>
-              <Link href="/onboarding/payer">
+              <Link href="/auth?type=seeker">
                 <Button className="w-full">Join as Seeker</Button>
               </Link>
             </div>
@@ -35,7 +35,7 @@ export default function Home() {
               <p className="text-muted-foreground mb-4">
                 Create opportunities and find talented individuals in your area
               </p>
-              <Link href="/onboarding/seeking">
+              <Link href="/auth?type=seeking">
                 <Button className="w-full">Join as Seeking</Button>
               </Link>
             </div>

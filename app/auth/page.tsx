@@ -6,9 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Toast } from '@/components/ui/toast';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuthPage() {
@@ -18,35 +17,49 @@ export default function AuthPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
-  const userType = searchParams.get('type');
+  const [userType, setUserType] = useState<'seeker' | 'seeking' | null>(null);
 
   const supabase = createClient();
+
+  useEffect(() => {
+    const param = searchParams.get('type');
+    if (param === 'seeker' || param === 'seeking') {
+      setUserType(param);
+    } else {
+      toast({
+        title: 'Invalid user type',
+        description: 'Invalid access type.',
+        variant: 'destructive',
+      });
+      router.replace('/');
+    }
+  }, [searchParams]);
 
   const handleAuth = async (isSignUp: boolean) => {
     try {
       setLoading(true);
-      
-      if (isSignUp) {
+
+      if (isSignUp && userType) {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
-              role: userType || 'seeker', // "role" matches your profile schema
+              role: ['onboard', userType],
             },
           },
         });
-        
+
         if (signUpError) throw signUpError;
-        
+
         const userId = signUpData.user?.id;
-        
+
         if (userId) {
           const { error: insertError } = await supabase.from('profiles').insert([
             {
               id: userId,
-              role: userType || 'seeker',
-              full_name: '', // You’ll populate these during onboarding
+              role: ['onboard', userType],
+              full_name: '',
               address: '',
               company_name: '',
               business_type: '',
@@ -54,7 +67,7 @@ export default function AuthPage() {
               longitude: null,
             },
           ]);
-        
+
           if (insertError) throw insertError;
         }
 
@@ -70,7 +83,7 @@ export default function AuthPage() {
 
         if (error) throw error;
 
-        router.push('/dashboard');
+        router.push('/dashboard'); // you’ll change this logic later to route based on profile.role
       }
     } catch (error: any) {
       toast({
@@ -89,7 +102,7 @@ export default function AuthPage() {
         <h1 className="text-2xl font-bold text-center mb-6">
           {userType ? `Join as ${userType}` : 'Welcome Back'}
         </h1>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -101,7 +114,7 @@ export default function AuthPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
